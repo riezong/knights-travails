@@ -48,43 +48,22 @@ function knightMoves(startSquare, endSquare) {
     ) {
       // Path reconstruction
       // Build path
-
-      // get last square
-      // get parent of last square
-      // set parent as current
-      // get parent of current
-      // ...
-      // repeat until parent is the starting square
-
-      const buildPath = [];
-      let lastSquare = Array.from(parentMap.keys())[parentMap.size - 1];
-
-      buildPath.push(lastSquare);
-      let thisSquare = parentMap.get(lastSquare);
-      buildPath.push(thisSquare);
-      let parentSquare = parentMap.get(thisSquare);
-      buildPath.push(parentSquare);
-
-      while (parentSquare !== arrayToKey(startSquare)) {
-        thisSquare = parentSquare;
-        parentSquare = parentMap.get(thisSquare);
-        buildPath.push(parentSquare);
-        if (parentSquare === startSquare) break;
+      const path = [];
+      let traceSquareKey = arrayToKey(endSquare); // Start tracing from the endSquare (which is currentSquare)
+      while (traceSquareKey !== arrayToKey(startSquare)) {
+        path.push(keyToArray(traceSquareKey)); // Add the current square to the path (will be reversed later)
+        traceSquareKey = parentMap.get(traceSquareKey); // Move to its parent
       }
+      path.push(startSquare); // Add the starting square, as it has no parent in the map
 
       // Reverse path
-      const reversePath = [];
-      for (let i = buildPath.length; i > 0; i--) {
-        reversePath.push(buildPath[i - 1]);
-      }
+      const shortestPath = path.reverse();
 
       // Output path and move count
       console.log(
-        "You made it in " +
-          (reversePath.length - 1) +
-          " moves! Here's your path: " +
-          reversePath.join(" -> "),
+        `You made it in ${shortestPath.length - 1} moves! Here's your path:`,
       );
+      shortestPath.forEach((square) => console.log(square));
       return;
     } else {
       // Generate all 8 potential nextSquares from currentSquare using the knight moves.
@@ -114,4 +93,4 @@ function knightMoves(startSquare, endSquare) {
   console.log(parentMap);
 }
 
-knightMoves([0, 0], [7, 7]);
+knightMoves([0, 0], [4, 3]);
