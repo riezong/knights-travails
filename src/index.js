@@ -23,41 +23,57 @@ function isValidMove(row, column) {
   }
 }
 
+function arrayToKey(arr) {
+  return `${arr[0]},${arr[1]}`;
+}
+
+function keyToArray(key) {
+  return key.split(",").map(Number);
+}
+
 function knightMoves(startSquare, endSquare) {
   const queue = [];
-  const visited = [];
-  const parentMap = [];
+  const visited = new Set();
+  const parentMap = new Map();
 
   queue.push(startSquare);
-  visited.push(startSquare);
+  visited.add(arrayToKey(startSquare));
 
   // BFS Loop
-  let currentSquare = queue.shift();
-  if (currentSquare[0] === endSquare[0] && currentSquare[1] === endSquare[1]) {
-    console.log(parentMap);
-    console.log("you found it");
-    return;
-  } else {
-    // Generate all 8 potential nextSquares from currentSquare using the knight moves.
-    let possibleNextSquares = possibleKnightMoves(
-      startSquare[0],
-      startSquare[1],
-    );
-    console.log(possibleNextSquares);
+  while (queue.length !== 0) {
+    let currentSquare = queue.shift();
+    if (
+      currentSquare[0] === endSquare[0] &&
+      currentSquare[1] === endSquare[1]
+    ) {
+      console.log(parentMap);
+      console.log("you found it");
+      return;
+    } else {
+      // Generate all 8 potential nextSquares from currentSquare using the knight moves.
+      let possibleNextSquares = possibleKnightMoves(
+        currentSquare[0],
+        currentSquare[1],
+      );
+      // console.log(possibleNextSquares);
 
-    possibleNextSquares.forEach((move) => {
-      if (isValidMove(move[0], move[1])) {
-        if (visited.includes(move) === false) {
-          visited.push(move);
-          parentMap.push(currentSquare);
-          queue.push(move);
+      possibleNextSquares.forEach((move) => {
+        if (isValidMove(move[0], move[1])) {
+          if (visited.has(arrayToKey(move)) === false) {
+            visited.add(arrayToKey(move));
+            parentMap.set(arrayToKey(move), arrayToKey(currentSquare)); // [key (child), value (parent)]
+            queue.push(move);
+          }
         }
-      }
-    });
+      });
+    }
   }
 
+  console.error("queue");
   console.log(queue);
+  console.error("visited");
   console.log(visited);
+  console.error("parentMap");
   console.log(parentMap);
 }
 
